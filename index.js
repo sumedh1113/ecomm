@@ -4,13 +4,15 @@ const cors = require("cors")
 const cookieParser = require("cookie-parser")
 const { sellerProtected, adminProtected } = require("./middlewares/auth.middleware")
 require("dotenv").config()
+const path = require("path")
 
 
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
+app.use(express.static("dist"))
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://ecomm-s2iq.onrender.com",
     credentials: true
 }))
 app.use("/api/auth", require("./routes/auth.routes"))
@@ -19,7 +21,8 @@ app.use("/api/admin", adminProtected, require("./routes/admin.routes"))
 app.use("/api/public", require("./routes/public.route"))
 
 app.use("*", (req, res) => {
-    res.status(404).json({ message: "resource not found" })
+    // res.status(404).json({ message: "resource not found" })
+    res.sendFile(path.join(__dirname, "dist", "index.html"))
 })
 app.use((err, req, res, next) => {
     console.log(err)
